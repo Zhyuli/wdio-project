@@ -61,7 +61,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'info',
+    logLevel: 'error',
     //
     // Set specific log levels per logger
     // loggers:
@@ -96,6 +96,10 @@ exports.config = {
     //
     // Default request retries count
     connectionRetryCount: 3,
+
+    pageLoadTimeout: 30000,
+
+    implicitWait: 5000,
     //
     // Test runner services
     // Services take over a specific job you don't want to take care of. They enhance
