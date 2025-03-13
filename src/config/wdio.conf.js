@@ -51,6 +51,7 @@ exports.config = {
     //
     capabilities: [{
         // capabilities for local browser web tests
+        maxInstances: 5,
         browserName: 'chrome' // or "firefox", "microsoftedge", "safari"
     }],
 
@@ -61,7 +62,8 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'error',
+    logLevel: 'info',
+    outputDir: "./logs",
     //
     // Set specific log levels per logger
     // loggers:
