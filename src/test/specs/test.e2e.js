@@ -39,11 +39,14 @@ describe("Login Form Validation", () => {
   });
 
   it("UC-2:Test Login form with credentials by passing Username", async () => {
+    log.info("Entering valid username...");
     await LoginPage.inputUsername.setValue("standard_user");
+    log.info("Entering invalid password...");
     await LoginPage.inputPassword.setValue("secret_sauce1");
 
     const selectAllKey = process.platform === "darwin" ? "Meta" : "Control";
 
+    log.info("Clearing password field...");
     await LoginPage.inputPassword.click();
     await browser.keys([selectAllKey, "a"]);
     await browser.keys("Backspace");
@@ -57,29 +60,35 @@ describe("Login Form Validation", () => {
     );
 
     let afterClear = await LoginPage.inputPassword.getValue();
-    console.log("value after cleaning:", afterClear);
+    log.info(`Password field after clearing:", ${afterClear}`);
     expect(afterClear).toBe("");
 
+    log.info("Clicking the login button...");
     await LoginPage.btnSubmit.waitForClickable({ timeout: 5000 });
     await LoginPage.btnSubmit.click();
 
+    log.info("Waiting for the error message to appear...");
     await LoginPage.errMsg.waitForExist({ timeout: 5000 });
     await expect(LoginPage.errMsg).toHaveText(
       "Epic sadface: Password is required"
     );
+    log.info("Error message successfully validated!");
   });
   acceptedUsernames.map((username) =>
     it(`UC-3: Test Login with accepted usernames: ${username}`, async () => {
-      console.log(`sratring test for user: ${username}`);
+      log.info(`Srarting login test for user: '${username}'`);
 
       await LoginPage.inputUsername.setValue(username);
       await LoginPage.inputPassword.setValue("secret_sauce");
-
+      
+      log.info("Clicking the login button...");
       await LoginPage.btnSubmit.click();
-
+      
+      log.info("Waiting for the dashboard to load...");
       await DashboardPage.title.waitForExist({ timeout: 5000 });
 
       const titleText = await DashboardPage.title.getText();
+      log.info(`Verifying dashboard title: '${titleText}'`)
       expect(titleText).toBe("Swag Labs");
 
       console.log(`User: ${username} was successfully logged!`);
