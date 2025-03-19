@@ -20,20 +20,55 @@ describe("Login Form Validation", () => {
     await LoginPage.inputUsername.setValue("user1");
     await LoginPage.inputPassword.setValue("pass1");
 
+    // log.info("Clearing input fields...");
+    // await LoginPage.inputUsername.clearValue();
+    // await LoginPage.inputPassword.clearValue();
+    const selectAllKey = process.platform === "darwin" ? "Meta" : "Control";
+
     log.info("Clearing input fields...");
-    await LoginPage.inputUsername.clearValue();
-    await LoginPage.inputPassword.clearValue();
+    await LoginPage.inputUsername.click();
+    await browser.keys([selectAllKey, "a"]);
+    await browser.keys("Backspace");
+
+    log.info("Clearing password field...");
+    await LoginPage.inputPassword.click();
+    await browser.keys([selectAllKey, "a"]);
+    await browser.keys("Backspace");
+
+
+    await browser.waitUntil(
+      async () => (await LoginPage.inputUsername.getValue()).trim() === "" &&
+                 (await LoginPage.inputPassword.getValue()).trim() === "",
+      {
+        timeout: 5000,
+        timeoutMsg: "Expected username and password fields to be empty, but they weren't",
+      }
+    );
+
+    let usernameAfterClear = await LoginPage.inputUsername.getValue();
+    let passwordAfterClear = await LoginPage.inputPassword.getValue();
+    
+    log.info(`Username field after clearing: "${usernameAfterClear}"`);
+    log.info(`Password field after clearing: "${passwordAfterClear}"`);
+
+    expect(usernameAfterClear).toBe("");
+    expect(passwordAfterClear).toBe("");
 
     log.info("Clicking the login button...");
     await LoginPage.btnSubmit.click();
 
     log.info("Waiting for the error message...");
     await LoginPage.errMsg.waitForExist({ timeout: 5000 });
-    log.info("Verifying that the error message exists...");
-    await expect(LoginPage.errMsg).toBeExisting();
+
+    // log.info("Verifying that the error message exists...");
+    // await expect(LoginPage.errMsg).toBeExisting();
+    log.info("Checking error message text...");
+    const errorMsgText = await LoginPage.errMsg.getText();
+    log.info(`Actual error message received: "${errorMsgText}"`);
+
     log.info("Checking error message text...");
     await expect(LoginPage.errMsg).toHaveText(
-      "Epic sadface: Username and password do not match any user in this service"
+      "Epic sadface: Username is required"
     );
     log.info("Error message successfully validated!");
   });
